@@ -1,0 +1,44 @@
+name: Integration
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+      AWS_CREDENTIALS_PATH: /home/runner/.aws
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up Ruby
+        uses: ruby/setup-ruby@ec106b438a1ff6ff109590de34ddc62c540232e0
+        with:
+          ruby-version: 2.5.3
+
+      - name: cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gem-
+
+      - name: install dependencies
+        run: |
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      - name: setup deploy environment
+        run: mkdir -p $AWS_CREDENTIALS_PATH &&
+             echo "[default]" > $AWS_CREDENTIALS_PATH/credentials &&
+             echo aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }} >> $AWS_CREDENTIALS_PATH/credentials &&
+             echo aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> $AWS_CREDENTIALS_PATH/credentials &&
+             cat $AWS_CREDENTIALS_PATH/credentials
+
+      - name: deploy application
+        run: echo "Y" | AWS_REGION=${{ secrets.AWS_REGION }} bundle exec jets deploy production
