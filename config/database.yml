@@ -1,23 +1,19 @@
+
 default: &default
   adapter: mysql2
   encoding: utf8mb4
-  pool: <%= ENV["DB_POOL"] || 5  %>
-  database: <%= ENV['DB_NAME'] || 'alliance_hackathon_development' %>
-  username: <%= ENV['DB_USER'] || 'root' %>
-  password: <%= ENV['ROOT_PASSWORD'] %>
-  host: <%= ENV["DB_HOST"] %>
-  url: <%= ENV['DATABASE_URL'] %> # takes higher precedence than other settings
-  reconnect: true
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  port: 3306
 
 development:
   <<: *default
-  database: alliance_hackathon_production
-
-test:
-  <<: *default
-  database: alliance_hackathon_test
+  password: <%= ENV['ROOT_PASSWORD'] %>
+  host: '127.0.0.1'
+  database: alliance_hackathon_development
 
 production:
   <<: *default
+  username: <%= ENV['DB_USER'] %>
+  password: <%= ENV['ROOT_PASSWORD'] %>
+  host: <%= ENV['DATABASE_URL'] %>
   database: alliance_hackathon
-  url: <%= ENV['DATABASE_URL'] %>
