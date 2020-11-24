@@ -5,7 +5,7 @@ module Response
 
       def initialize(time)
         @status = :bad_request
-        @should_raise = time.match(/[0-9]{4}-[0-9]{2}-[0-9]{2}+$/).nil?
+        @should_raise = time.match(/[0-9]{4}-[0-1][0-9]-[0-3][0-9]+$/).nil?
 
         super('Bad Request : invalid time format')
       end

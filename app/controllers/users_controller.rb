@@ -18,7 +18,8 @@ class UsersController < ApplicationController
   def show
     render json: { name: @user.name,
                    address: @user.address,
-                   blood_type: @user.blood_type }, status: :ok
+                   blood_type: @user.blood_type,
+                   birth_date: @user.birth_date }, status: :ok
   end
 
   def update

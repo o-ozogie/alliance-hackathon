@@ -9,7 +9,8 @@ class ApplicationController < Jets::Controller::Base
               'UnauthorizedException::UnauthorizedToken',
               'UnauthorizedException::UnauthorizedUser',
               'ForbiddenException::Forbidden',
-              'NotFoundException::NotFoundSpot' do |e|
+              'NotFoundException::NotFoundSpot',
+              'ConflictException::ConflictInfection' do |e|
     render_error(e)
   end
 

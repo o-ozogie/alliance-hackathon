@@ -5,26 +5,29 @@ class InfectionsController < ApplicationController
   ALERT_PER_PAGE = 10
 
   def alert
-    params.require(%i[page])
-
-    render json: Alert.where(users: @user)
-                      .offset(ALERT_PER_PAGE * (params[:page] - 1))
-                      .limit(ALERT_PER_PAGE)
-                      .map { |alert|
-                   log = alert.log
-                   {
-                     visited_at: log.created_at,
-                     address: log.spot.address,
-                     spot_name: log.spot.name,
-                     latitude: log.spot.latitude,
-                     longitude: log.spot.longitude
-                   }
-                 }, status: :ok
+    render json: Alert.where(user: @user).map { |alert|
+      log = alert.log
+      {
+        visited_at: log.created_at,
+        address: log.spot.address,
+        spot_name: log.spot.name,
+        latitude: log.spot.latitude,
+        longitude: log.spot.longitude
+      }
+    }, status: :ok
   end
 
-  def related_with_infection(infected_user)
-    infected_logs = infected_user.logs.where(created_at: (now - 2.weeks)..now)
-    pre_infected_logs = infected_logs.map { |infected_log| Log.where(created_at: infected_log.created_at..now) }
+  def infected
+    params.require(%i[email])
+
+    ConflictException::ConflictInfection.except(@user)
+    infected_user = InfectedUser.create!(user: @user, infected_at: now)
+    infected_user.relation_with_infection(now).each do |log|
+      InfectionsMailer.warning(log)
+      Alert.create!(alerted_at: now, log: log, user: log.user)
+    end
+    InfectionsMailer.hand_over(Log.where(user: @user, created_at: (now - 2.weeks)..now))
+    render
   end
 end
 

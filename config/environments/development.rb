@@ -4,4 +4,6 @@ Jets.application.configure do
 
   # config.action_mailer.raise_delivery_errors = false
   # Docs: http://rubyonjets.com/docs/email-sending/
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
 end

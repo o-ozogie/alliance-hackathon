@@ -5,4 +5,6 @@ Jets.application.routes.draw do
   get '/information', to: 'users#show'
   put '/information', to: 'users#update'
   get '/spot/:spot_id', to: 'spots#show'
+  get '/alerts', to: 'infections#alert'
+  post '/infection', to: 'infections#infected'
 end

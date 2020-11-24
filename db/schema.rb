@@ -15,6 +15,7 @@ ActiveRecord::Schema.define(version: 2020_11_23_223520) do
   create_table "alerts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "user_email"
     t.bigint "log_id"
+    t.datetime "alerted_at"
     t.index ["log_id"], name: "index_alerts_on_log_id"
   end
 
