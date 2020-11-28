@@ -21,7 +21,9 @@ class InfectedUser < ApplicationRecord
       end
     end
 
-    infected_logs.flat_map { |infected_log| infected_log.spot.logs.where(created_at: infected_log.created_at..now) }
+    infected_logs.flat_map do |infected_log|
+      infected_log.spot.logs.where(created_at: DateTime.strptime(infected_log.created_at, '%Y-%m-%d %H:%M:%S')..infected_at)
+    end
   end
 
 

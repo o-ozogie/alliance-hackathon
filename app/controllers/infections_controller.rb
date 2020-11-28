@@ -23,10 +23,12 @@ class InfectionsController < ApplicationController
     ConflictException::ConflictInfection.except(@user)
     infected_user = InfectedUser.create!(user: @user, infected_at: now)
     infected_user.relation_with_infection(now).each do |log|
+      next if log.user == @user
+
       InfectionsMailer.warning(log)
       Alert.create!(alerted_at: now, log: log, user: log.user)
     end
-    InfectionsMailer.hand_over(Log.where(user: @user, created_at: (now - 2.weeks)..now))
+    InfectionsMailer.hand_over(Log.where(user: @user, created_at: (now - 2.weeks)..now), params[:email])
     render
   end
 end

@@ -44,6 +44,7 @@ jobs:
         run: echo DATABASE_URL=${{ secrets.DATABASE_URL }} > .env &&
              echo DB_USER=${{ secrets.DB_USER }} >> .env &&
              echo ROOT_PASSWORD=${{ secrets.ROOT_PASSWORD }} >> .env &&
+             echo SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }} >> .env
              cat .env
 
       - name: deploy application
